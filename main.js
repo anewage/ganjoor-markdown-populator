@@ -35,7 +35,7 @@ for (const field of whiteList) {
 
 // Populate poems inside poets
 for (const poem of data.poems.list) {
-  console.log(poem.id + ' ...')
+  console.log('Reading ' + poem.id + ' ...')
   // Find and attach all the verses
   const verses = data.verses.list.filter(function (v) { return +(v.poem_id) === +(poem.id) })
   poem.verses = verses.sort(function (a, b) { return a.vorder < b.vorder ? 0 : 1 })
@@ -65,12 +65,12 @@ for (const poem of data.poems.list) {
     data.poets.list[poetIndex].poems = []
   }
   data.poets.list[poetIndex].poems.push(poem)
-  console.log('DONE ', poem.id)
+  console.log('DONE reading', poem.id)
 }
 
 // Creating files
 for (const poet of data.poets.list) {
-  console.log(poet.id, ': ', poet.name, ' ...')
+  console.log('Writing ' + poet.id, ': ', poet.name, ' ...')
   const poetDir = _outDir + poet.id
   if (!fs.existsSync(poetDir)) { fs.mkdirSync(poetDir) }
   // Creating folders for poets
@@ -99,5 +99,5 @@ for (const poet of data.poets.list) {
       writeFile(poetDir + '\\' + poem.id + '.md', content)
     }
   }
-  console.log('DONE ', poet.id)
+  console.log('DONE writing ', poet.id)
 }
