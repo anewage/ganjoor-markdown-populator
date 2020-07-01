@@ -1,12 +1,12 @@
 const fs = require('fs')
-function readJson(inputFile) {
+function readJson (inputFile) {
   return JSON.parse(fs.readFileSync(inputFile, 'utf8'))
 }
-function writeFile(path, data) {
+function writeFile (path, data) {
   return fs.writeFileSync(path, data)
 }
-const _dataDir = '.\\data\\'
-const _outDir = '.\\md\\'
+const _dataDir = './data/'
+const _outDir = './md/'
 
 const data = {
   poems: {
@@ -27,8 +27,6 @@ const data = {
   }
 }
 
-let poets = []
-
 // Read content
 const whiteList = ['poems', 'poets', 'categories', 'verses']
 for (const field of whiteList) {
@@ -39,11 +37,11 @@ for (const field of whiteList) {
 for (const poem of data.poems.list) {
   console.log(poem.id + ' ...')
   // Find and attach all the verses
-  const verses = data.verses.list.filter(function(v) { return +(v.poem_id) === +(poem.id) })
-  poem.verses = verses.sort(function(a, b){ return a.vorder < b.vorder ? 0 : 1})
+  const verses = data.verses.list.filter(function (v) { return +(v.poem_id) === +(poem.id) })
+  poem.verses = verses.sort(function (a, b) { return a.vorder < b.vorder ? 0 : 1 })
 
   // The category for this poem
-  const catIndex = data.categories.list.findIndex(c => {
+  const catIndex = data.categories.list.findIndex((c) => {
     return (poem.cat_id === c.id)
   })
 
@@ -55,7 +53,7 @@ for (const poem of data.poems.list) {
     poetID = data.categories.list[catIndex].poet_id
   } else {
     // Look for the parent
-    const parentCatIndex = data.categories.list.findIndex(c => {
+    const parentCatIndex = data.categories.list.findIndex((c) => {
       return (data.categories.list[catIndex].parent_id === c.id)
     })
     poetID = data.categories.list[parentCatIndex].poet_id
@@ -74,30 +72,29 @@ for (const poem of data.poems.list) {
 for (const poet of data.poets.list) {
   console.log(poet.id, ': ', poet.name, ' ...')
   const poetDir = _outDir + poet.id
-  if (!fs.existsSync(poetDir)) fs.mkdirSync(poetDir)
+  if (!fs.existsSync(poetDir)) { fs.mkdirSync(poetDir) }
   // Creating folders for poets
-  writeFile(poetDir + '\\index.md', '' +
+  writeFile(poetDir + '/index.md', '' +
       '---\n' +
-      'title: ' + poet.name + '\n' +
-      'description: ' + poet.description + '\n' +
+      'title: "' + poet.name + '"\n' +
+      'description: "' + poet.description + '"\n' +
       'poet_id: ' + poet.id + '\n' +
-      'poet: ' + poet.name + '\n' +
+      'poet: "' + poet.name + '"\n' +
       '---')
-  if (poet.poems){
+  if (poet.poems) {
     // Putting the verses inside the files
     for (const poem of poet.poems) {
       const content = '' +
           '---\n' +
-          'title: ' + poem.title + '\n' +
-          'description: ' + poem.title + '\n' +
+          'title: "' + poem.title + '"\n' +
+          'description: "' + poem.title + '"\n' +
           'post_id: ' + poet.id + '\n' +
-          'poet: ' + poet.name + '\n' +
+          'poet: "' + poet.name + '"\n' +
           'poem_id: ' + poem.id + '\n' +
-          'poem: ' + poem.title + '\n' +
-          'verses:\n' +
+          'poem: "' + poem.title + '"\n' +
           '---\n\n' +
           '\n<div dir="rtl">\n\n' +
-          poem.verses.map(function(a) { return a.text }).join(' \n\n ') +
+          poem.verses.map(function (a) { return a.text }).join(' \n\n ') +
           '\n\n</div>\n'
       writeFile(poetDir + '\\' + poem.id + '.md', content)
     }
